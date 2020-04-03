@@ -6,10 +6,8 @@ public protocol AuthService {
     func start()
     
     var token: String? { get set }
-//    func getTokenForNetworkService() -> String?
     
-    
-//    func process(url: URL, fromApplication: String)  - для чего?
+//    func process(url: URL, fromApplication: String)
 }
 
 public protocol AuthServiceOutput {
@@ -35,12 +33,6 @@ class AuthServiceImpl: NSObject, AuthService {
     weak var controller: UIViewController! // injected!
     
     
-//    func getTokenForNetworkService() -> String? {
-//        return VKSdk.accessToken()?.accessToken
-//    }
-    
-    
-    
     func start() {
         vkSdk = VKSdk.initialize(withAppId: configuration.appId)
         vkSdk?.register(self)
@@ -53,7 +45,6 @@ class AuthServiceImpl: NSObject, AuthService {
                 VKSdk.authorize(self.configuration.permissions)
             case .authorized:
                 print("authorized")
-                // необходимо перети на след контроллер
                 
                 // callback:
                 
@@ -63,15 +54,11 @@ class AuthServiceImpl: NSObject, AuthService {
                 
                 // closure:
                 
-                
             default:
                 break
             }
         }
-        
     }
-    
-    
 }
 
 extension AuthServiceImpl: VKSdkDelegate {
@@ -81,6 +68,9 @@ extension AuthServiceImpl: VKSdkDelegate {
         if result.token != nil {
             print("get token!")
         }
+        
+        self.token = VKSdk.accessToken()?.accessToken
+        self.output?.goBackToVC()
     }
     
     func vkSdkUserAuthorizationFailed() {

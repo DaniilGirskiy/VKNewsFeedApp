@@ -47,8 +47,8 @@ class NetworkServiceImpl: NetworkService {
         components.host = API.host
         components.path = path
         components.queryItems = params.map { URLQueryItem(name: $0, value: $1) }
-        print("ВСЕ ОК")
-        return components.url! // где делать проверку, что url не nil?
+    
+        return components.url!
     }
     
     
