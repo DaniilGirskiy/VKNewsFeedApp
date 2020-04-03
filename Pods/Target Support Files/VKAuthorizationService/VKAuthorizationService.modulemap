@@ -1,0 +1,6 @@
+framework module VKAuthorizationService {
+  umbrella header "VKAuthorizationService-umbrella.h"
+
+  export *
+  module * { export * }
+}

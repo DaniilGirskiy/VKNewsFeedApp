@@ -1,0 +1,35 @@
+PODS:
+  - Kingfisher (5.13.0):
+    - Kingfisher/Core (= 5.13.0)
+  - Kingfisher/Core (5.13.0)
+  - VK-ios-sdk (1.5.1)
+  - VKAuthorizationService (0.1.0):
+    - VK-ios-sdk
+  - VKNetworkService (0.1.0)
+
+DEPENDENCIES:
+  - Kingfisher
+  - VK-ios-sdk
+  - VKAuthorizationService (from `./Modules/VKAuthorizationService`)
+  - VKNetworkService (from `./Modules/VKNetworkService`)
+
+SPEC REPOS:
+  trunk:
+    - Kingfisher
+    - VK-ios-sdk
+
+EXTERNAL SOURCES:
+  VKAuthorizationService:
+    :path: "./Modules/VKAuthorizationService"
+  VKNetworkService:
+    :path: "./Modules/VKNetworkService"
+
+SPEC CHECKSUMS:
+  Kingfisher: 0d334cada987fcddbe9b5cec516406e1ee9d4748
+  VK-ios-sdk: 62a10b6571fbcda0657f455fedce7fedf55b4cd0
+  VKAuthorizationService: 52aa6dc07bdd44d8c1f6f55440d503e5138b1d97
+  VKNetworkService: 9673d294f3b92bd2812e281cc1a0c8e0faca2967
+
+PODFILE CHECKSUM: 4f8071bbf2322085f6cf88e5634cce5a2981d2fc
+
+COCOAPODS: 1.8.4

@@ -1,0 +1,6 @@
+framework module VKNetworkService {
+  umbrella header "VKNetworkService-umbrella.h"
+
+  export *
+  module * { export * }
+}
