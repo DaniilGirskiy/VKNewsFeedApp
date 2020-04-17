@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Kingfisher
+
 
 class NewsFeedViewController: UIViewController {
     
@@ -24,6 +24,9 @@ class NewsFeedViewController: UIViewController {
 
         view.backgroundColor = .systemBlue
         
+        tableView.separatorStyle = .none
+        tableView.backgroundColor = .clear
+        
         model.load()
         
         configureUI()
@@ -36,8 +39,8 @@ class NewsFeedViewController: UIViewController {
         tableView.dataSource = self
         
         tableView.register(UINib(nibName: "NewsFeedCell", bundle: nil), forCellReuseIdentifier: NewsFeedCell.reuseId)
+        tableView.register(NewsFeedCodeCell.self, forCellReuseIdentifier: NewsFeedCodeCell.reuseId)
     }
-
 }
 
 extension NewsFeedViewController: UITableViewDelegate, UITableViewDataSource {
@@ -46,36 +49,24 @@ extension NewsFeedViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: NewsFeedCell.reuseId, for: indexPath) as! NewsFeedCell
+//        let cell = tableView.dequeueReusableCell(withIdentifier: NewsFeedCell.reuseId, for: indexPath) as! NewsFeedCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: NewsFeedCodeCell.reuseId, for: indexPath) as! NewsFeedCodeCell
         let post = model.presentationPosts[indexPath.row]
-            
-        let iconURL = URL(string: post.iconUrlString)
-        if let imageURL = URL(string: post.postUrlString) {
-            cell.postImageView.kf.setImage(with: imageURL)
-            cell.postImageView.isHidden = false
-        } else {
-            cell.postImageView.isHidden = true
+        
+        cell.moreTextButtonPressedClosure = {
+            self.model.revealFullText(at: indexPath.row)
         }
-        
-        cell.iconImageView.kf.setImage(with: iconURL)
-        
-        cell.nameLabel.text = post.name
-        cell.dateLabel.text = post.date
-        cell.postLabel.text = post.text
-        cell.likesLabel.text = post.likes
-        cell.commentsLabel.text = post.comments
-        cell.sharesLabel.text = post.shares
-        cell.viewsLabel.text = post.views
-        
+    
+        cell.set(post: post)
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 400
+        let post = model.presentationPosts[indexPath.row]
+        return post.sizes.totalHeight
+//        return 212
     }
-
 }
-
 
 extension NewsFeedViewController: NewsFeedModelOutput {
     func updateViewFromModel() {

@@ -15,6 +15,8 @@ protocol NewsFeedModel {
     
     var presentationPosts: [PresentationPost] { get set }
     func load()
+    
+    func revealFullText(at index: Int)
 }
 
 protocol NewsFeedModelOutput {
@@ -25,6 +27,8 @@ class NewsFeedModelImpl: NewsFeedModel {
     var storage: Storage!
     var networkService: NetworkService! // injected
     var authService: AuthService! // injected
+    
+    var cellLayoutCalculator: NewsFeedCellLayoutCalculator!
     
     var output: NewsFeedModelOutput?
     var presentationPosts: [PresentationPost] = []
@@ -47,6 +51,18 @@ class NewsFeedModelImpl: NewsFeedModel {
                 let date = Date(timeIntervalSince1970: item.date!)
                 let dateTitle = self.dateFormatter.string(from: date)
                 
+                var photo: PhotoAttachment?
+        
+                if let photoAttachment = item.attachments?.first?.photo {
+                    photo = PhotoAttachment(postUrlString: photoAttachment.url,
+                                            postHeight: photoAttachment.height,
+                                            postWidth: photoAttachment.width)
+                }
+                
+                let sizes = self.cellLayoutCalculator.sizes(postText: item.text,
+                                                            photoAttachment: photo,
+                                                            textIsFullSized: false)
+            
                 return StoragePost(name: source.name,
                                    iconUrlString: source.photo,
                                    date: dateTitle,
@@ -55,11 +71,15 @@ class NewsFeedModelImpl: NewsFeedModel {
                                    comments: String(item.comments?.count ?? 0),
                                    shares: String(item.reposts?.count ?? 0),
                                    views: String(item.views?.count ?? 0),
-                                   postUrlString: item.attachments?.first?.photo?.url ?? "",
-                                   postHeight: item.attachments?.first?.photo?.height ?? 0,
-                                   postWidth: item.attachments?.first?.photo?.width ?? 0)
+                                   photoAttachment: photo,
+                                   fullPostTextIsRevealed: false,
+                                   sizes: sizes)
             })
         }
+    }
+    
+    func revealFullText(at index: Int) {
+        storage.revealFullText(index: index)
     }
     
     private func identifyNewsSource(sourceId: Int,
@@ -73,21 +93,17 @@ class NewsFeedModelImpl: NewsFeedModel {
         }
         
         return source! 
-    }
-    
-//    private func getPropperPhoto(attachments: [Attachment]) -> PhotoSize {
-//        
-//        
-//        
-//    }
-    
-    
-    
+    }   
 }
 
 extension NewsFeedModelImpl: StorageOutput {
     func collectionChanged(newValue: [StoragePost]) {
         presentationPosts = newValue.map{ (storagePost) -> PresentationPost in
+            
+            let sizes = cellLayoutCalculator.sizes(postText: storagePost.text,
+                                                   photoAttachment: storagePost.photoAttachment,
+                                                   textIsFullSized: storagePost.fullPostTextIsRevealed)
+            
             return PresentationPost(name: storagePost.name,
                                     iconUrlString: storagePost.iconUrlString,
                                     date: storagePost.date,
@@ -96,11 +112,12 @@ extension NewsFeedModelImpl: StorageOutput {
                                     comments: storagePost.comments,
                                     shares: storagePost.shares,
                                     views: storagePost.views,
-                                    postUrlString: storagePost.postUrlString,
-                                    postHeight: storagePost.postHeight,
-                                    postWidth: storagePost.postWidth)
+                                    photoAttachment: storagePost.photoAttachment,
+                                    fullPostTextIsRevealed: storagePost.fullPostTextIsRevealed,
+                                    sizes: sizes)
         }
         output?.updateViewFromModel()
+        
     }
     
     

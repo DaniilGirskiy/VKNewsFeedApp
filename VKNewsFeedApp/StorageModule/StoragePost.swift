@@ -12,12 +12,12 @@ struct StoragePost {
     let name: String
     let iconUrlString: String
     let date: String
-    let text: String
+    let text: String?
     let likes: String
     let comments: String
     let shares: String
     let views: String
-    let postUrlString: String
-    let postHeight: Int
-    let postWidth: Int
+    let photoAttachment: PhotoAttachment?
+    let fullPostTextIsRevealed: Bool
+    let sizes: NewsFeedCellSizes 
 }

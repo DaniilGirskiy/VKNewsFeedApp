@@ -22,6 +22,8 @@ class NewsFeedModelAssembly {
         model.storage = storageAssembly.storage
         model.storage.output = model
         
+        model.cellLayoutCalculator = NewsFeedCellLayoutCalculator(screenWidth: UIScreen.main.bounds.width)
+        
         return model
     }
 }
